@@ -323,9 +323,12 @@ app.post("/api/translate", async (req, res) => {
  * Returns the webhook URL information for configuration in 123formbuilder.
  */
 app.get("/api/webhook-url", (req, res) => {
-  // Construct the webhook URL based on the request
-  const protocol = req.protocol;
+  // Construct the webhook URL based on the request.
+  // Prefer https unless we're clearly on localhost (Render/Cloudflare proxy
+  // terminate TLS externally, so req.protocol reports "http" behind the proxy).
   const host = req.get("host");
+  const isLocal = /^localhost|^127\.|^10\.|^192\.168\.|^172\.(1[6-9]|2\d|3[01])\./.test(host || "");
+  const protocol = req.secure || (req.get("x-forwarded-proto") === "https") || !isLocal ? "https" : "http";
   const baseUrl = `${protocol}://${host}`;
 
   res.json({
