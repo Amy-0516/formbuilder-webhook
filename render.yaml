@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: formbuilder-webhook
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: TRANSLATION_PROVIDER
+        value: mymemory
+      - key: TARGET_LANGS
+        value: en,zh,ja,ko,es,fr,de
+      - key: NODE_ENV
+        value: production

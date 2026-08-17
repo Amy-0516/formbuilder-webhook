@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>123formbuilder Webhook & Translation Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo">
+          <span class="logo-icon">🔗</span>
+          <div>
+            <h1>Form Builder Webhook</h1>
+            <p>123formbuilder Integration & Multi-language Translation</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <span id="health-status" class="status-badge status-ok">● Online</span>
+          <span id="submission-count" class="status-badge">0 submissions</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tabs">
+      <button class="tab active" data-tab="overview">Overview</button>
+      <button class="tab" data-tab="submissions">Submissions</button>
+      <button class="tab" data-tab="config">Settings</button>
+      <button class="tab" data-tab="tester">Translation Tester</button>
+    </nav>
+
+    <!-- Tab: Overview -->
+    <section id="tab-overview" class="tab-content active">
+      <div class="card-grid">
+        <!-- Webhook URL Card -->
+        <div class="card card-highlight">
+          <div class="card-header">
+            <h2>Webhook URL</h2>
+            <span class="badge badge-green">Ready</span>
+          </div>
+          <p class="card-desc">Paste this URL into 123formbuilder's WebHook integration settings.</p>
+          <div class="url-box">
+            <input type="text" id="webhook-url" readonly value="Loading..." />
+            <button class="btn btn-copy" onclick="copyToClip('webhook-url')">Copy</button>
+          </div>
+          <div class="url-box">
+            <input type="text" id="form-webhook-url" readonly value="Loading..." />
+            <button class="btn btn-copy" onclick="copyToClip('form-webhook-url')">Copy</button>
+          </div>
+          <p class="card-hint">Form-specific URL: replace <code>{formId}</code> with your form ID</p>
+        </div>
+
+        <!-- Integration Steps Card -->
+        <div class="card">
+          <div class="card-header">
+            <h2>Integration Steps</h2>
+          </div>
+          <ol class="steps-list">
+            <li>Log in to <a href="https://www.123formbuilder.com/" target="_blank">123formbuilder</a> and open your form</li>
+            <li>Go to <strong>Settings</strong> → <strong>Integrations</strong></li>
+            <li>Search for <strong>WebHook</strong> and click <strong>Connect</strong></li>
+            <li>Paste your Webhook URL into the <strong>Script URL</strong> field</li>
+            <li>Optionally enable <strong>Use Webhook Mapping</strong> to customize field mapping</li>
+            <li>Save, then <strong>Preview</strong> the form and submit a test entry</li>
+            <li>Come back here to view the submission and its translations</li>
+          </ol>
+        </div>
+
+        <!-- Translation Config Card -->
+        <div class="card">
+          <div class="card-header">
+            <h2>Translation Configuration</h2>
+          </div>
+          <div class="config-row">
+            <span class="config-label">Provider:</span>
+            <span id="config-provider" class="config-value">google-free</span>
+          </div>
+          <div class="config-row">
+            <span class="config-label">Target Languages:</span>
+            <div id="config-langs" class="lang-chips"></div>
+          </div>
+          <p class="card-hint">Configure languages and providers in the Settings tab</p>
+        </div>
+
+        <!-- Stats Card -->
+        <div class="card">
+          <div class="card-header">
+            <h2>Quick Stats</h2>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-box">
+              <span class="stat-num" id="stat-total">0</span>
+              <span class="stat-label">Total Submissions</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num" id="stat-translated">0</span>
+              <span class="stat-label">Translated</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num" id="stat-langs">0</span>
+              <span class="stat-label">Target Languages</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab: Submissions -->
+    <section id="tab-submissions" class="tab-content">
+      <div class="submissions-layout">
+        <!-- Submission List -->
+        <div class="submission-list-panel">
+          <div class="panel-header">
+            <h2>Submissions</h2>
+            <div class="panel-actions">
+              <button class="btn btn-sm" onclick="loadSubmissions()">Refresh</button>
+              <button class="btn btn-sm btn-danger" onclick="clearAll()">Clear All</button>
+            </div>
+          </div>
+          <div id="submission-list" class="submission-list">
+            <div class="empty-state">
+              <span class="empty-icon">📭</span>
+              <p>No submissions yet</p>
+              <p class="empty-hint">Submit a form in 123formbuilder to see data here</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submission Detail -->
+        <div class="submission-detail-panel">
+          <div id="submission-detail" class="submission-detail">
+            <div class="empty-state">
+              <span class="empty-icon">👈</span>
+              <p>Select a submission to view details</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab: Config -->
+    <section id="tab-config" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h2>Language Configuration</h2>
+        </div>
+        <p class="card-desc">Select the languages you want to translate form submissions into.</p>
+        <div id="lang-checkboxes" class="lang-checkbox-grid"></div>
+        <div class="config-actions">
+          <button class="btn" onclick="saveLanguages()">Save Languages</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Translation Provider</h2>
+        </div>
+        <p class="card-desc">
+          Currently using: <strong id="current-provider">mymemory</strong><br>
+          <span class="card-hint">To change the provider, set the <code>TRANSLATION_PROVIDER</code> environment variable and restart. Supported: mymemory, google-free, auto, deepl, google-cloud, azure</span>
+        </p>
+        <div class="provider-info">
+          <div class="provider-card">
+            <h3>MyMemory <span class="badge badge-green">Default</span></h3>
+            <p>Free, no key required. 5000 words/day (50000 with <code>MYMEMORY_EMAIL</code>).</p>
+          </div>
+          <div class="provider-card">
+            <h3>Google Free</h3>
+            <p>Set <code>TRANSLATION_PROVIDER=google-free</code>. No key, but may be blocked in some networks.</p>
+          </div>
+          <div class="provider-card">
+            <h3>Auto (Fallback)</h3>
+            <p>Set <code>TRANSLATION_PROVIDER=auto</code>. Tries Google Free first, falls back to MyMemory.</p>
+          </div>
+          <div class="provider-card">
+            <h3>DeepL</h3>
+            <p>Set <code>TRANSLATION_PROVIDER=deepl</code> and <code>DEEPL_API_KEY</code>.</p>
+          </div>
+          <div class="provider-card">
+            <h3>Google Cloud</h3>
+            <p>Set <code>TRANSLATION_PROVIDER=google-cloud</code> and <code>GOOGLE_CLOUD_API_KEY</code>.</p>
+          </div>
+          <div class="provider-card">
+            <h3>Azure Translator</h3>
+            <p>Set <code>TRANSLATION_PROVIDER=azure</code>, <code>AZURE_TRANSLATOR_KEY</code>, <code>AZURE_REGION</code>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab: Tester -->
+    <section id="tab-tester" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h2>Translation Tester</h2>
+        </div>
+        <p class="card-desc">Test the translation service with any text.</p>
+        <div class="tester-form">
+          <textarea id="test-text" placeholder="Enter text to translate..." rows="4"></textarea>
+          <button class="btn" onclick="testTranslation()">Translate</button>
+        </div>
+        <div id="test-result" class="test-result"></div>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
