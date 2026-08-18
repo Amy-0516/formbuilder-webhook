@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INIU 表单多语言 · 一键翻译工具</title>
+<style>
+  :root {
+    --bg: #f5f7fa;
+    --card: #fff;
+    --text: #2c3e50;
+    --text2: #666;
+    --accent: #3498db;
+    --accent-hover: #2980b9;
+    --success: #27ae60;
+    --border: #e0e5ec;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+    --code-bg: #f0f3f7;
+    --tag-bg: #e8f4fd;
+    --tag-text: #2471a3;
+    --warn-bg: #fef9e7;
+    --warn-border: #f9e79f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 24px;
+  }
+  .container { max-width: 780px; margin: 0 auto; }
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+  h1 { font-size: 24px; margin-bottom: 6px; }
+  h2 { font-size: 18px; margin: 20px 0 12px; color: var(--text); }
+  .subtitle { color: var(--text2); font-size: 14px; margin-bottom: 20px; }
+  .lang-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+  .lang-tag {
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .step { margin-bottom: 20px; }
+  .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  .step-title { font-weight: 600; font-size: 15px; display: inline; }
+  .step-desc { color: var(--text2); font-size: 14px; margin: 4px 0 0 34px; }
+  .bookmarklet-box {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--code-bg);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+  }
+  .bookmarklet-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .bookmarklet-btn:hover { background: var(--accent-hover); }
+  .bookmarklet-btn.drag-me {
+    cursor: grab;
+    border: 2px dashed var(--accent);
+    background: #fff;
+    color: var(--accent);
+  }
+  .bookmarklet-btn.drag-me:hover { background: var(--tag-bg); }
+  .bookmarklet-btn.console-btn {
+    background: #fff;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+  }
+  .bookmarklet-btn.console-btn:hover { background: var(--tag-bg); }
+  .bookmarklet-hint {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+  .bookmarklet-hint strong { color: var(--text); }
+  .warn {
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #7d6608;
+    margin: 12px 0;
+  }
+  .code-block {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    color: #2c3e50;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  .copy-wrap { position: relative; }
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 12px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0.9;
+  }
+  .copy-btn:hover { opacity: 1; }
+  .copy-btn.copied { background: var(--success); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+  .footer { text-align: center; color: var(--text2); font-size: 12px; margin-top: 24px; }
+  @media (max-width: 600px) {
+    body { padding: 12px; }
+    .card { padding: 18px 16px; }
+    .bookmarklet-box { flex-direction: column; align-items: flex-start; }
+  }
+  .emoji-icon { font-size: 20px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="card" style="text-align:center;">
+    <h1>🌐 INIU Care Center 表单 · 一键翻译工具</h1>
+    <p class="subtitle">在 123formbuilder 中打开 Customize 弹窗 → 点一下 → 自动填入全部翻译</p>
+    <div class="lang-tags">
+      <span class="lang-tag">🇩🇪 德语</span>
+      <span class="lang-tag">🇮🇹 意大利语</span>
+      <span class="lang-tag">🇪🇸 西班牙语</span>
+      <span class="lang-tag">🇫🇷 法语</span>
+      <span class="lang-tag">🇵🇱 波兰语</span>
+      <span class="lang-tag">🇳🇱 荷兰语</span>
+      <span class="lang-tag">🇮🇪 爱尔兰语</span>
+      <span class="lang-tag">🇯🇵 日语</span>
+      <span class="lang-tag">🇸🇦 阿拉伯语</span>
+      <span class="lang-tag">🇵🇹 葡萄牙语</span>
+    </div>
+    <p style="margin-top:8px;font-size:14px;color:var(--text2);">共 235 条文案 · 全部翻译完成</p>
+  </div>
+
+  <!-- 方法一：书签 -->
+  <div class="card">
+    <h2>📌 方法一：书签工具（推荐）</h2>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:8px;">拖拽下方按钮到你的浏览器书签栏，之后每次只需点击一下</p>
+
+    <div class="bookmarklet-box">
+      <a class="bookmarklet-btn drag-me" href="javascript:(function(){var s=document.createElement('script');s.src='https://formbuilder-webhook.onrender.com/auto-fill.js';document.head.appendChild(s);var t=document.createElement('script');t.src='https://formbuilder-webhook.onrender.com/translations.js';document.head.appendChild(t);})();" onclick="event.preventDefault();alert('请把这个按钮拖拽到你的浏览器书签栏！\n\n之后在 123formbuilder 的 Customize 窗口中点击这个书签即可。');" title="拖拽到书签栏">
+        🚀 INIU 一键翻译
+      </a>
+      <div class="bookmarklet-hint">
+        <strong>👆 拖拽到书签栏</strong><br>
+        如果看不到书签栏，按 <strong>Ctrl+Shift+B</strong>（Chrome/Edge）或 <strong>Cmd+Shift+B</strong>（Safari）显示
+      </div>
+    </div>
+
+    <div class="warn">
+      💡 <strong>使用步骤：</strong><br>
+      1. 登录 <a href="https://www.123formbuilder.com" target="_blank">123formbuilder</a>，打开你的 INIU 表单<br>
+      2. 进入 <strong>Set up → Language</strong>，点击语言的 ✏️ <strong>Customize</strong> 按钮<br>
+      3. 在弹出的翻译编辑窗口中，点击书签栏的 <strong>"INIU 一键翻译"</strong><br>
+      4. 等待 1-2 秒，所有翻译自动填入 → 点击 <strong>Save</strong> 保存<br>
+      5. 切换到下一个语言，重复步骤 3-4
+    </div>
+  </div>
+
+  <!-- 方法二：控制台 -->
+  <div class="card">
+    <h2>⌨️ 方法二：控制台脚本（备用）</h2>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:8px;">如果书签不生效，可以复制这段代码到浏览器控制台运行</p>
+
+    <div class="copy-wrap">
+      <button class="copy-btn" id="copy-console" onclick="copyConsole()">📋 复制</button>
+      <div class="code-block" id="console-script">// 在 123formbuilder Customize 弹窗中，按 F12 打开控制台，粘贴并回车
+var s1=document.createElement('script');
+s1.src='https://formbuilder-webhook.onrender.com/translations.js';
+document.head.appendChild(s1);
+var s2=document.createElement('script');
+s2.src='https://formbuilder-webhook.onrender.com/auto-fill.js';
+document.head.appendChild(s2);</div>
+    </div>
+
+    <div class="warn">
+      💡 <strong>使用步骤：</strong><br>
+      1. 打开 123formbuilder Customize 翻译编辑弹窗<br>
+      2. 按 <strong>F12</strong> 打开开发者工具，切换到 <strong>Console（控制台）</strong> 标签<br>
+      3. 粘贴上方代码，按 <strong>回车</strong><br>
+      4. 翻译自动填入 → 点击 <strong>Save</strong> 保存
+    </div>
+  </div>
+
+  <!-- 按语言拆分 -->
+  <div class="card">
+    <h2>📋 方法三：按语言复制粘贴（兜底）</h2>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:12px;">如果前两种方法都不行，可以按语言逐个查看翻译对照表，手动复制粘贴</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+      <button class="bookmarklet-btn console-btn" onclick="showLangTable('de')" style="font-size:13px;padding:8px 14px;">🇩🇪 德语</button>
+      <button class="bookmarklet-btn console-btn" onclick="showLangTable('it')" style="font-size:13px;padding:8px 14px;">🇮🇹 意大利语</button>
+      <button class="bookmarklet-btn console-btn" onclick="showLangTable('es')" style="font-size:13px;padding:8px 14px;">🇪🇸 西班牙语</button>
+      <button class="bookmarklet-btn console-btn" onclick="showLangTable('fr')" style="font-size:13px;padding:8px 14px;">🇫🇷 法语</button>
+      <button class="bookmarklet-btn console-btn" onclick="showLangTable('pl')" style="font-size:13px;padding:8px 14px;">🇵🇱 波兰语</button>
+      <button class="bookmarklet-btn console-btn" onclick="showLangTable('nl')" style="font-size:13px;padding:8px 14px;">🇳🇱 荷兰语</button>
+      <button class="bookmarklet-btn console-btn" onclick="showLangTable('ga')" style="font-size:13px;padding:8px 14px;">🇮🇪 爱尔兰语</button>
+      <button class="bookmarklet-btn console-btn" onclick="showLangTable('ja')" style="font-size:13px;padding:8px 14px;">🇯🇵 日语</button>
+      <button class="bookmarklet-btn console-btn" onclick="showLangTable('ar')" style="font-size:13px;padding:8px 14px;">🇸🇦 阿拉伯语</button>
+      <button class="bookmarklet-btn console-btn" onclick="showLangTable('pt')" style="font-size:13px;padding:8px 14px;">🇵🇹 葡萄牙语</button>
+    </div>
+
+    <div id="lang-table" style="display:none;">
+      <div style="overflow-x:auto;max-height:500px;overflow-y:auto;">
+        <table id="lang-table-content" style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead><tr style="background:var(--code-bg);position:sticky;top:0;"><th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border);">#</th><th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border);">English</th><th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border);">Translation</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <p class="footer">INIU Care Center · Translation Tool · Data served from Render</p>
+
+</div>
+
+<script>
+// 加载翻译数据
+var translationsData = null;
+fetch('https://formbuilder-webhook.onrender.com/translations.js')
+  .then(function(r) { return r.text(); })
+  .then(function(t) { eval(t); translationsData = window.__INIU_TRANSLATIONS__; })
+  .catch(function() { console.log('Translation data not preloaded (will load on demand)'); });
+
+var langNames = {
+  de: '德语', it: '意大利语', es: '西班牙语', fr: '法语', pl: '波兰语',
+  nl: '荷兰语', ga: '爱尔兰语', ja: '日语', ar: '阿拉伯语', pt: '葡萄牙语'
+};
+
+function showLangTable(code) {
+  var table = document.getElementById('lang-table');
+  var tbody = document.querySelector('#lang-table-content tbody');
+  var data = translationsData;
+
+  if (!data) {
+    // 动态加载
+    var s = document.createElement('script');
+    s.src = 'https://formbuilder-webhook.onrender.com/translations.js';
+    s.onload = function() {
+      translationsData = window.__INIU_TRANSLATIONS__;
+      renderTable(code);
+    };
+    document.head.appendChild(s);
+    return;
+  }
+  renderTable(code);
+
+  function renderTable(code) {
+    var entries = translationsData[code];
+    tbody.innerHTML = '';
+    var i = 1;
+    for (var en in entries) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td style="padding:6px 12px;border-bottom:1px solid var(--border);color:var(--text2);">' + (i++) + '</td>' +
+        '<td style="padding:6px 12px;border-bottom:1px solid var(--border);">' + en + '</td>' +
+        '<td style="padding:6px 12px;border-bottom:1px solid var(--border);font-weight:500;" dir="' + (code === 'ar' ? 'rtl' : 'ltr') + '">' + entries[en] + '</td>';
+      tbody.appendChild(tr);
+    }
+    table.style.display = 'block';
+    table.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function copyConsole() {
+  var text = document.getElementById('console-script').textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = document.getElementById('copy-console');
+    btn.textContent = '✅ 已复制';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = '📋 复制';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>
