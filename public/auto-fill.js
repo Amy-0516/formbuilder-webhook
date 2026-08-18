@@ -356,14 +356,15 @@
   // ====== 启动 ======
   addLog('📦 INIU 翻译自动填充工具 v2 启动', '#2c3e50');
 
-  if (window.__INIU_TRANSLATIONS__) {
+  // 始终显示语言选择器，不再自动检测（自动检测经常误判）
+  function startWithSelector() {
     addLog('✅ 翻译数据已加载 (' + Object.keys(window.__INIU_TRANSLATIONS__).length + ' 种语言)', '#27ae60');
-    var langCode = detectLanguage();
-    if (langCode) {
-      executeFill(langCode);
-    } else {
-      createLanguageSelector();
-    }
+    addLog('📋 显示语言选择器...', '#3498db');
+    createLanguageSelector();
+  }
+
+  if (window.__INIU_TRANSLATIONS__) {
+    startWithSelector();
   } else {
     addLog('⏳ 等待翻译数据加载...', '#e67e22');
     var attempts = 0;
@@ -371,13 +372,7 @@
       attempts++;
       if (window.__INIU_TRANSLATIONS__) {
         clearInterval(checkInterval);
-        addLog('✅ 翻译数据加载完成', '#27ae60');
-        var lc = detectLanguage();
-        if (lc) {
-          executeFill(lc);
-        } else {
-          createLanguageSelector();
-        }
+        startWithSelector();
       } else if (attempts > 60) {
         clearInterval(checkInterval);
         addLog('❌ 翻译数据加载超时（30秒）。请检查网络连接，或刷新页面重试', '#e74c3c');
