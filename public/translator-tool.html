@@ -20,6 +20,8 @@
     --tag-text: #2471a3;
     --warn-bg: #fef9e7;
     --warn-border: #f9e79f;
+    --red-bg: #fdecea;
+    --red-border: #f5c6cb;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -121,6 +123,15 @@
     color: #7d6608;
     margin: 12px 0;
   }
+  .error-box {
+    background: var(--red-bg);
+    border: 1px solid var(--red-border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #a94442;
+    margin: 12px 0;
+  }
   .code-block {
     background: var(--code-bg);
     border-radius: 8px;
@@ -133,6 +144,7 @@
     color: #2c3e50;
     max-height: 300px;
     overflow-y: auto;
+    position: relative;
   }
   .copy-wrap { position: relative; }
   .copy-btn {
@@ -147,6 +159,7 @@
     font-size: 12px;
     cursor: pointer;
     opacity: 0.9;
+    z-index: 1;
   }
   .copy-btn:hover { opacity: 1; }
   .copy-btn.copied { background: var(--success); }
@@ -158,6 +171,17 @@
     .bookmarklet-box { flex-direction: column; align-items: flex-start; }
   }
   .emoji-icon { font-size: 20px; }
+  .primary-badge {
+    display: inline-block;
+    background: #27ae60;
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+    font-weight: 600;
+    vertical-align: middle;
+  }
 </style>
 </head>
 <body>
@@ -166,7 +190,7 @@
   <!-- Header -->
   <div class="card" style="text-align:center;">
     <h1>🌐 INIU Care Center 表单 · 一键翻译工具</h1>
-    <p class="subtitle">在 123formbuilder 中打开 Customize 弹窗 → 点一下 → 自动填入全部翻译</p>
+    <p class="subtitle">在 123formbuilder 中打开 Customize 弹窗 → 粘贴脚本 → 自动填入全部翻译</p>
     <div class="lang-tags">
       <span class="lang-tag">🇩🇪 德语</span>
       <span class="lang-tag">🇮🇹 意大利语</span>
@@ -179,63 +203,70 @@
       <span class="lang-tag">🇸🇦 阿拉伯语</span>
       <span class="lang-tag">🇵🇹 葡萄牙语</span>
     </div>
-    <p style="margin-top:8px;font-size:14px;color:var(--text2);">共 235 条文案 · 全部翻译完成</p>
+    <p style="margin-top:8px;font-size:14px;color:var(--text2);">共 235 条文案 · 全部翻译完成 · 强化版 v2</p>
   </div>
 
-  <!-- 方法一：书签 -->
+  <!-- 主打方法：控制台 -->
+  <div class="card" style="border-left: 4px solid var(--success);">
+    <h2>⌨️ 推荐方法：控制台脚本 <span class="primary-badge">推荐</span></h2>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:8px;">复制下方代码，在 123formbuilder 的 Customize 弹窗中按 F12 粘贴运行</p>
+
+    <div class="copy-wrap">
+      <button class="copy-btn" id="copy-console" onclick="copyConsole()">📋 复制</button>
+      <div class="code-block" id="console-script">// 在 123formbuilder 的 Customize 翻译编辑弹窗中：
+// 1. 按 F12 打开控制台 (Console)
+// 2. 粘贴全部代码，按回车
+// 3. 自动填入翻译 → 点击 Save 保存
+
+(function(){
+var s1=document.createElement('script');
+s1.src='https://formbuilder-webhook.onrender.com/translations.js?v=2';
+document.head.appendChild(s1);
+var s2=document.createElement('script');
+s2.src='https://formbuilder-webhook.onrender.com/auto-fill.js?v=2';
+document.head.appendChild(s2);
+})();</div>
+    </div>
+
+    <div class="warn">
+      💡 <strong>详细步骤：</strong><br>
+      1. 登录 123formbuilder，打开你的 INIU 表单<br>
+      2. 进入 <strong>Set up → Language</strong>，点击某个语言的 ✏️ <strong>Customize</strong><br>
+      3. 等翻译编辑弹窗完全加载后，按 <strong>F12</strong> 打开开发者工具<br>
+      4. 切换到 <strong>Console（控制台）</strong> 标签<br>
+      5. 粘贴上方代码，按 <strong>回车</strong> 执行<br>
+      6. 如果自动检测到语言，翻译会直接填入；否则会弹出语言选择器<br>
+      7. 填入后，点击弹窗中的 <strong>Save</strong> 保存<br>
+      8. 切换到下一个语言，重复步骤 5-7
+    </div>
+
+    <div class="error-box">
+      ⚠️ <strong>如果控制台粘贴不了？</strong><br>
+      在 Console 中输入 <code>allow pasting</code> 然后按回车，再粘贴即可。
+    </div>
+  </div>
+
+  <!-- 书签方法 -->
   <div class="card">
-    <h2>📌 方法一：书签工具（推荐）</h2>
-    <p style="font-size:14px;color:var(--text2);margin-bottom:8px;">拖拽下方按钮到你的浏览器书签栏，之后每次只需点击一下</p>
+    <h2>📌 备用方法：书签工具</h2>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:8px;">拖拽按钮到书签栏，之后每次点击一下即可（可能受 123formbuilder 安全策略限制）</p>
 
     <div class="bookmarklet-box">
-      <a class="bookmarklet-btn drag-me" href="javascript:(function(){var s=document.createElement('script');s.src='https://formbuilder-webhook.onrender.com/auto-fill.js';document.head.appendChild(s);var t=document.createElement('script');t.src='https://formbuilder-webhook.onrender.com/translations.js';document.head.appendChild(t);})();" onclick="event.preventDefault();alert('请把这个按钮拖拽到你的浏览器书签栏！\n\n之后在 123formbuilder 的 Customize 窗口中点击这个书签即可。');" title="拖拽到书签栏">
+      <a class="bookmarklet-btn drag-me" href="javascript:(function()%7Bvar%20t%3Ddocument.createElement('script')%3Bt.src%3D'https%3A%2F%2Fformbuilder-webhook.onrender.com%2Ftranslations.js%3Fv%3D2'%3Bdocument.head.appendChild(t)%3Bvar%20s%3Ddocument.createElement('script')%3Bs.src%3D'https%3A%2F%2Fformbuilder-webhook.onrender.com%2Fauto-fill.js%3Fv%3D2'%3Bdocument.head.appendChild(s)%3B%7D)()%3B" onclick="event.preventDefault();alert('请把这个按钮拖拽到你的浏览器书签栏！\n\n之后在 123formbuilder 的 Customize 弹窗中点击这个书签即可。\n\n⚠️ 如果点击后没反应，请使用方法一（控制台脚本）。');" title="拖拽到书签栏">
         🚀 INIU 一键翻译
       </a>
       <div class="bookmarklet-hint">
         <strong>👆 拖拽到书签栏</strong><br>
-        如果看不到书签栏，按 <strong>Ctrl+Shift+B</strong>（Chrome/Edge）或 <strong>Cmd+Shift+B</strong>（Safari）显示
+        看不到书签栏？按 <strong>Ctrl+Shift+B</strong>（Chrome/Edge）<br>
+        ⚠️ 如果点击后没有反应，请用上方的「控制台脚本」方法
       </div>
-    </div>
-
-    <div class="warn">
-      💡 <strong>使用步骤：</strong><br>
-      1. 登录 <a href="https://www.123formbuilder.com" target="_blank">123formbuilder</a>，打开你的 INIU 表单<br>
-      2. 进入 <strong>Set up → Language</strong>，点击语言的 ✏️ <strong>Customize</strong> 按钮<br>
-      3. 在弹出的翻译编辑窗口中，点击书签栏的 <strong>"INIU 一键翻译"</strong><br>
-      4. 等待 1-2 秒，所有翻译自动填入 → 点击 <strong>Save</strong> 保存<br>
-      5. 切换到下一个语言，重复步骤 3-4
-    </div>
-  </div>
-
-  <!-- 方法二：控制台 -->
-  <div class="card">
-    <h2>⌨️ 方法二：控制台脚本（备用）</h2>
-    <p style="font-size:14px;color:var(--text2);margin-bottom:8px;">如果书签不生效，可以复制这段代码到浏览器控制台运行</p>
-
-    <div class="copy-wrap">
-      <button class="copy-btn" id="copy-console" onclick="copyConsole()">📋 复制</button>
-      <div class="code-block" id="console-script">// 在 123formbuilder Customize 弹窗中，按 F12 打开控制台，粘贴并回车
-var s1=document.createElement('script');
-s1.src='https://formbuilder-webhook.onrender.com/translations.js';
-document.head.appendChild(s1);
-var s2=document.createElement('script');
-s2.src='https://formbuilder-webhook.onrender.com/auto-fill.js';
-document.head.appendChild(s2);</div>
-    </div>
-
-    <div class="warn">
-      💡 <strong>使用步骤：</strong><br>
-      1. 打开 123formbuilder Customize 翻译编辑弹窗<br>
-      2. 按 <strong>F12</strong> 打开开发者工具，切换到 <strong>Console（控制台）</strong> 标签<br>
-      3. 粘贴上方代码，按 <strong>回车</strong><br>
-      4. 翻译自动填入 → 点击 <strong>Save</strong> 保存
     </div>
   </div>
 
   <!-- 按语言拆分 -->
   <div class="card">
-    <h2>📋 方法三：按语言复制粘贴（兜底）</h2>
-    <p style="font-size:14px;color:var(--text2);margin-bottom:12px;">如果前两种方法都不行，可以按语言逐个查看翻译对照表，手动复制粘贴</p>
+    <h2>📋 兜底方法：按语言查看对照表</h2>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:12px;">如果自动填充都不行，可以按语言查看对照表，手动复制粘贴</p>
 
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
       <button class="bookmarklet-btn console-btn" onclick="showLangTable('de')" style="font-size:13px;padding:8px 14px;">🇩🇪 德语</button>
@@ -260,17 +291,16 @@ document.head.appendChild(s2);</div>
     </div>
   </div>
 
-  <p class="footer">INIU Care Center · Translation Tool · Data served from Render</p>
+  <p class="footer">INIU Care Center · Translation Tool v2 · Data served from Render</p>
 
 </div>
 
 <script>
-// 加载翻译数据
 var translationsData = null;
-fetch('https://formbuilder-webhook.onrender.com/translations.js')
+fetch('https://formbuilder-webhook.onrender.com/translations.js?v=2')
   .then(function(r) { return r.text(); })
   .then(function(t) { eval(t); translationsData = window.__INIU_TRANSLATIONS__; })
-  .catch(function() { console.log('Translation data not preloaded (will load on demand)'); });
+  .catch(function() { console.log('预加载失败，将在点击语言按钮时按需加载'); });
 
 var langNames = {
   de: '德语', it: '意大利语', es: '西班牙语', fr: '法语', pl: '波兰语',
@@ -283,12 +313,14 @@ function showLangTable(code) {
   var data = translationsData;
 
   if (!data) {
-    // 动态加载
     var s = document.createElement('script');
-    s.src = 'https://formbuilder-webhook.onrender.com/translations.js';
+    s.src = 'https://formbuilder-webhook.onrender.com/translations.js?v=2';
     s.onload = function() {
       translationsData = window.__INIU_TRANSLATIONS__;
       renderTable(code);
+    };
+    s.onerror = function() {
+      alert('加载翻译数据失败，请检查网络连接或刷新页面重试');
     };
     document.head.appendChild(s);
     return;
@@ -297,6 +329,7 @@ function showLangTable(code) {
 
   function renderTable(code) {
     var entries = translationsData[code];
+    if (!entries) { alert('未找到该语言数据'); return; }
     tbody.innerHTML = '';
     var i = 1;
     for (var en in entries) {
@@ -321,6 +354,14 @@ function copyConsole() {
       btn.textContent = '📋 复制';
       btn.classList.remove('copied');
     }, 2000);
+  }).catch(function() {
+    // 降级：手动选择
+    var range = document.createRange();
+    range.selectNodeContents(document.getElementById('console-script'));
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    alert('请按 Ctrl+C 复制已选中的代码');
   });
 }
 </script>
