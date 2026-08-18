@@ -203,7 +203,7 @@
       <span class="lang-tag">🇸🇦 阿拉伯语</span>
       <span class="lang-tag">🇵🇹 葡萄牙语</span>
     </div>
-    <p style="margin-top:8px;font-size:14px;color:var(--text2);">共 235 条文案 · 全部翻译完成 · 强化版 v2</p>
+    <p style="margin-top:8px;font-size:14px;color:var(--text2);">共 235 条文案 · 全部翻译完成 · v3</p>
   </div>
 
   <!-- 主打方法：控制台 -->
@@ -220,10 +220,10 @@
 
 (function(){
 var s1=document.createElement('script');
-s1.src='https://formbuilder-webhook.onrender.com/translations.js?v=2';
+s1.src='https://formbuilder-webhook.onrender.com/translations.js?v=3';
 document.head.appendChild(s1);
 var s2=document.createElement('script');
-s2.src='https://formbuilder-webhook.onrender.com/auto-fill.js?v=2';
+s2.src='https://formbuilder-webhook.onrender.com/auto-fill.js?v=3';
 document.head.appendChild(s2);
 })();</div>
     </div>
@@ -235,7 +235,7 @@ document.head.appendChild(s2);
       3. 等翻译编辑弹窗完全加载后，按 <strong>F12</strong> 打开开发者工具<br>
       4. 切换到 <strong>Console（控制台）</strong> 标签<br>
       5. 粘贴上方代码，按 <strong>回车</strong> 执行<br>
-      6. 如果自动检测到语言，翻译会直接填入；否则会弹出语言选择器<br>
+      6. 会弹出语言选择器，点击你要填的语言 → 自动填入 → 点 Save<br>
       7. 填入后，点击弹窗中的 <strong>Save</strong> 保存<br>
       8. 切换到下一个语言，重复步骤 5-7
     </div>
@@ -252,7 +252,7 @@ document.head.appendChild(s2);
     <p style="font-size:14px;color:var(--text2);margin-bottom:8px;">拖拽按钮到书签栏，之后每次点击一下即可（可能受 123formbuilder 安全策略限制）</p>
 
     <div class="bookmarklet-box">
-      <a class="bookmarklet-btn drag-me" href="javascript:(function()%7Bvar%20t%3Ddocument.createElement('script')%3Bt.src%3D'https%3A%2F%2Fformbuilder-webhook.onrender.com%2Ftranslations.js%3Fv%3D2'%3Bdocument.head.appendChild(t)%3Bvar%20s%3Ddocument.createElement('script')%3Bs.src%3D'https%3A%2F%2Fformbuilder-webhook.onrender.com%2Fauto-fill.js%3Fv%3D2'%3Bdocument.head.appendChild(s)%3B%7D)()%3B" onclick="event.preventDefault();alert('请把这个按钮拖拽到你的浏览器书签栏！\n\n之后在 123formbuilder 的 Customize 弹窗中点击这个书签即可。\n\n⚠️ 如果点击后没反应，请使用方法一（控制台脚本）。');" title="拖拽到书签栏">
+      <a class="bookmarklet-btn drag-me" href="javascript:(function()%7Bvar%20t%3Ddocument.createElement('script')%3Bt.src%3D'https%3A%2F%2Fformbuilder-webhook.onrender.com%2Ftranslations.js%3Fv%3D3'%3Bdocument.head.appendChild(t)%3Bvar%20s%3Ddocument.createElement('script')%3Bs.src%3D'https%3A%2F%2Fformbuilder-webhook.onrender.com%2Fauto-fill.js%3Fv%3D3'%3Bdocument.head.appendChild(s)%3B%7D)()%3B" onclick="event.preventDefault();alert('请把这个按钮拖拽到你的浏览器书签栏！\n\n之后在 123formbuilder 的 Customize 弹窗中点击这个书签即可。\n\n⚠️ 如果点击后没反应，请使用方法一（控制台脚本）。');" title="拖拽到书签栏">
         🚀 INIU 一键翻译
       </a>
       <div class="bookmarklet-hint">
@@ -291,13 +291,13 @@ document.head.appendChild(s2);
     </div>
   </div>
 
-  <p class="footer">INIU Care Center · Translation Tool v2 · Data served from Render</p>
+  <p class="footer">INIU Care Center · Translation Tool v3 · Data served from Render</p>
 
 </div>
 
 <script>
 var translationsData = null;
-fetch('https://formbuilder-webhook.onrender.com/translations.js?v=2')
+fetch('https://formbuilder-webhook.onrender.com/translations.js?v=3')
   .then(function(r) { return r.text(); })
   .then(function(t) { eval(t); translationsData = window.__INIU_TRANSLATIONS__; })
   .catch(function() { console.log('预加载失败，将在点击语言按钮时按需加载'); });
